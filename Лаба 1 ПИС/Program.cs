@@ -50,7 +50,6 @@ namespace Лаба_1_ПИС
 
             Console.Write("Дата (гггг.мм.дд): ");
             fp.Date = DateTime.ParseExact(Console.ReadLine(), "yyyy.MM.dd", null);
-
             Console.Write("Цена: ");
             fp.Price = decimal.Parse(Console.ReadLine().Replace('.', ','));
 
