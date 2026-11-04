@@ -1,72 +1,53 @@
+using System;
+using System.IO;
+using ÏÈÑ2;
 using Xunit;
-using ÏÈÑ3;
 
-namespace TestProject1
+namespace ÏÈÑ2.Tests
 {
-    public class IgraTests
+    public class FuelRecordTests
     {
-        [Fact]
-        public void Vzyat_IzKolody_KartaPopadaetVSbros()
+        private static readonly string TestLogPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+            "logTest.txt");
+
+        public FuelRecordTests()
         {
-            var igra = new Igra();
-            igra.Koloda.Add(new Karta("×", 7));
-
-            igra.Vzyat();
-
-            Assert.Empty(igra.Koloda);
-            Assert.Single(igra.Sbros);
-            Assert.True(igra.Sbros[0].Otkryta);
+            Logger.SetLogPath(TestLogPath);
         }
 
         [Fact]
-        public void MozhnoVStolbec_DrugoyCvetINaOdinMenshe_True()
+        public void FromLine_Price_Works()
         {
-            var igra = new Igra();
+            FuelRecord r = FuelRecord.FromLine("PRICE;ÀÈ-95;2024.05.17;55.40")!;
 
-            igra.Stolbcy[0].Add(new Karta("×", 7) { Otkryta = true });
-
-            var shesterkaPik = new Karta("Ï", 6) { Otkryta = true };
-
-            Assert.True(igra.MozhnoVStolbec(shesterkaPik, 0));
+            Assert.Equal("Öåíà", r.Kind);
+            Assert.Equal("ÀÈ-95", r.FuelType);
+            Assert.Equal(55.40m, r.Price);
         }
 
         [Fact]
-        public void MozhnoVStolbec_TotZheCvet_False()
+        public void FromLine_Station_Works()
         {
-            var igra = new Igra();
+            FuelRecord r = FuelRecord.FromLine("STATION;ÀÈ-92;2024.05.18;52.10;Ëóêîéë;3")!;
 
-            igra.Stolbcy[0].Add(new Karta("×", 7) { Otkryta = true });
-
-            var shesterkaBub = new Karta("Á", 6) { Otkryta = true };
-
-            Assert.False(igra.MozhnoVStolbec(shesterkaBub, 0));
+            Assert.Equal("ÀÇÑ", r.Kind);
+            Assert.Equal("ÀÈ-92", r.FuelType);
+            Assert.Equal(52.10m, r.Price);
+            Assert.Equal("Ëóêîéë", r.StationName);
+            Assert.Equal(3, r.Column);
         }
 
         [Fact]
-        public void VDom_TuzIzSbrosa_Uspeh()
+        public void FromLine_Delivery_Works()
         {
-            var igra = new Igra();
-            igra.Sbros.Add(new Karta("×", 1) { Otkryta = true });
+            FuelRecord r = FuelRecord.FromLine("DELIVERY;ÄÒ;2024.05.19;60.00;10000.0;1")!;
 
-            bool result = igra.VDom(0, -1);
-
-            Assert.True(result);
-            Assert.Empty(igra.Sbros);
-            Assert.Equal(1, igra.VsegoVDomah());
-        }
-
-        [Fact]
-        public void Nachat_RazdachaPravilnaya()
-        {
-            var igra = new Igra();
-            igra.Nachat();
-
-            Assert.Equal(24, igra.Koloda.Count);
-            for (int i = 0; i < 7; i++)
-            {
-                Assert.Equal(i + 1, igra.Stolbcy[i].Count);
-                Assert.True(igra.Stolbcy[i][i].Otkryta);
-            }
+            Assert.Equal("Ïîñòàâêà", r.Kind);
+            Assert.Equal("ÄÒ", r.FuelType);
+            Assert.Equal(60.00m, r.Price);
+            Assert.Equal(10000.0, r.Volume);
+            Assert.True(r.IsPaid);
         }
     }
 }

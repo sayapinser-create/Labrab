@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ПИС3\ПИС3.csproj" />
+    <ProjectReference Include="..\ПИС2\ПИС2.csproj" />
   </ItemGroup>
 
   <ItemGroup>
